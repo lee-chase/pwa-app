@@ -1,10 +1,13 @@
 module.exports = {
   // ...other vue-cli plugin options...
   pwa: {
+    appleMobileWebAppCapable: "yes",
+    appleMobileWebAppStatusBarStyle: "black",
+
     // configure the workbox plugin
-    workboxPluginMode: "GenerateSW",
+    workboxPluginMode: "InjectManifest",
     workboxOptions: {
-      skipWaiting: true
+      swSrc: "src/service-worker.js"
     }
   }
 };

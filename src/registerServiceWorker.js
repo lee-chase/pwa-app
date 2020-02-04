@@ -1,7 +1,13 @@
 /* eslint-disable no-console */
 
 import { register } from "register-service-worker";
-// import { skipWaiting } from "workbox-core";
+import alertify from "alertify.js";
+
+const notifyUserAboutUpdate = worker => {
+  alertify.confirm("new content!", () => {
+    worker.postMessage({ action: "skipWaiting" });
+  });
+};
 
 if (process.env.NODE_ENV === "production") {
   register(`${process.env.BASE_URL}service-worker.js`, {
@@ -20,9 +26,9 @@ if (process.env.NODE_ENV === "production") {
     updatefound() {
       console.log("New content is downloading.");
     },
-    updated() {
+    updated(registration) {
       console.log("New content is available; please refresh.");
-      window.location.reload();
+      notifyUserAboutUpdate(registration.waiting);
     },
     offline() {
       console.log(
@@ -32,5 +38,12 @@ if (process.env.NODE_ENV === "production") {
     error(error) {
       console.error("Error during service worker registration:", error);
     }
+  });
+
+  let refreshing;
+  navigator.serviceWorker.addEventListener("controllerchange", function() {
+    if (refreshing) return;
+    window.location.reload();
+    refreshing = true;
   });
 }
