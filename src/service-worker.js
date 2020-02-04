@@ -1,8 +1,6 @@
-console.dir(workbox);
+/* global workbox */
 
-// workbox.core.setCacheNameDetails({ prefix: "pwa-app" });
-
-// workbox.core.skipWaiting();
+workbox.core.setCacheNameDetails({ prefix: "pwa-app" });
 
 /**
  * The workboxSW.precacheAndRoute() method efficiently caches and responds to
@@ -14,8 +12,6 @@ workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
 // install new service worker when ok, then reload page.
 self.addEventListener("message", msg => {
-  console.log("Got a message");
-  console.dir(msg);
   if (msg.data.action == "skipWaiting") {
     self.skipWaiting();
   }
