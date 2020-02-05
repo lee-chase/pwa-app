@@ -16,3 +16,25 @@ self.addEventListener("message", msg => {
     self.skipWaiting();
   }
 });
+
+const articleHandler = workbox.strategies.networkFirst({
+  cacheName: "articles-cache",
+  plugins: [
+    new workbox.expiration.Plugin({
+      maxEntries: 50
+    })
+  ]
+});
+
+workbox.routing.registerRoute(/http:\/\/localhost:5051\/.*/, args => {
+  return articleHandler.handle(args).then(response => {
+    // // eslint-disable-next-line
+    // console.log("got here");
+    if (!response) {
+      return caches.match("pages/offline.html");
+    } else if (response.status === 404) {
+      return caches.match("pages/404.html");
+    }
+    return response;
+  });
+});
