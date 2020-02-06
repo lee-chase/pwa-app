@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <HelloWorld
+      msg="Welcome to Your Vue.js App"
+      :data-test="serviceWorkerUpdate"
+    />
     <Articles />
   </div>
 </template>
@@ -15,6 +18,14 @@ export default {
   components: {
     HelloWorld,
     Articles
+  },
+  methods: {
+    whenServiceWorkderUpdated(ok) {
+      // eslint-disable-next-line
+      if (confirm("An update is availabel. Refresh?")) {
+        ok();
+      }
+    }
   }
 };
 </script>
@@ -28,6 +39,6 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 
-  background-color: lightyellow;
+  background-color: indianred;
 }
 </style>

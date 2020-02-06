@@ -1,12 +1,14 @@
 /* eslint-disable no-console */
 
 import { register } from "register-service-worker";
-import alertify from "alertify.js";
+// import alertify from "alertify.js";
 
 const notifyUserAboutUpdate = worker => {
-  alertify.confirm("new content!", () => {
+  // alertify.confirm("new content!", () => {
+  window.vueInstance.$emit("service-worker-updated", () => {
     worker.postMessage({ action: "skipWaiting" });
   });
+  // });
 };
 
 if (process.env.NODE_ENV === "production") {
