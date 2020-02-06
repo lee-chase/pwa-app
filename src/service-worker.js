@@ -17,11 +17,18 @@ self.addEventListener("message", msg => {
   }
 });
 
+// When usig precaching the client files are already in the cache and will follow a cacheOnly strategy.
+//
+// If not using precaching or wanting to cache non-build time generated information you will need to choose a caching strategy.
+//
+// https://developers.google.com/web/tools/workbox/modules/workbox-strategies#network_only
+//
 const articleHandler = workbox.strategies.networkFirst({
   cacheName: "articles-cache",
   plugins: [
     new workbox.expiration.Plugin({
-      maxEntries: 50
+      maxEntries: 50,
+      maxAgeSeconds: 30 * 24 * 60 * 60 // 30 Days
     })
   ]
 });
