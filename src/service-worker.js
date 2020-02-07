@@ -1,4 +1,7 @@
-/* global workbox */
+/* global workbox, importScripts */
+importScripts(
+  "https://storage.googleapis.com/workbox-cdn/releases/3.5.0/workbox-sw.js"
+);
 
 workbox.core.setCacheNameDetails({ prefix: "pwa-app" });
 
@@ -33,10 +36,9 @@ const articleHandler = workbox.strategies.networkFirst({
   ]
 });
 
-workbox.routing.registerRoute(/http:\/\/localhost:5051\/.*/, args => {
+workbox.routing.registerRoute(/http:\/\/localhost:5051\/article\/.*/, args => {
+  // article\/
   return articleHandler.handle(args).then(response => {
-    // // eslint-disable-next-line
-    // console.log("got here");
     if (!response) {
       return caches.match("pages/offline.html");
     } else if (response.status === 404) {
@@ -44,4 +46,18 @@ workbox.routing.registerRoute(/http:\/\/localhost:5051\/.*/, args => {
     }
     return response;
   });
+});
+
+self.addEventListener("fetch", event => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  if (url.href.startsWith("http://localhost:5051/_data/articles/")) {
+    event.respondWith(
+      new workbox.strategies.NetworkFirst({ cacheName: "other-cache" }).handle({
+        event,
+        request
+      })
+    );
+  }
 });
