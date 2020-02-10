@@ -48,16 +48,24 @@ workbox.routing.registerRoute(/http:\/\/localhost:5051\/article\/.*/, args => {
   });
 });
 
-self.addEventListener("fetch", event => {
-  const { request } = event;
-  const url = new URL(request.url);
+const articleDataHandler = workbox.strategies.staleWhileRevalidate({
+  cacheName: "articles-data-cache",
+  plugins: [
+    new workbox.expiration.Plugin({
+      maxEntries: 50,
+      maxAgeSeconds: 30 * 24 * 60 * 60 // 30 Days
+    }),
+    new workbox.broadcastUpdate.Plugin("wbu-channel")
+  ]
+});
 
-  if (url.href.startsWith("http://localhost:5051/_data/articles/")) {
-    event.respondWith(
-      new workbox.strategies.NetworkFirst({ cacheName: "other-cache" }).handle({
-        event,
-        request
-      })
-    );
-  }
+workbox.routing.registerRoute(/http:\/\/localhost:5051\/_data\/.*/, args => {
+  return articleDataHandler.handle(args).then(response => {
+    if (!response) {
+      return caches.match("pages/offline.html");
+    } else if (response.status === 404) {
+      return caches.match("pages/404.html");
+    }
+    return response;
+  });
 });

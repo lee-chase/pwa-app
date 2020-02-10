@@ -46,4 +46,13 @@ if (process.env.NODE_ENV === "production") {
     window.location.reload();
     refreshing = true;
   });
+
+  // const updateChannel = new BroadcastChannel("wbu-channel");
+  // updateChannel.addEventListener("message", event => {
+  //   // eslint-disable-next-line
+  //   console.dir(event);
+  //   // if (confirm(`New content is available!. Click OK to refresh`)) {
+  //   //   window.location.reload();
+  //   // }
+  // });
 }

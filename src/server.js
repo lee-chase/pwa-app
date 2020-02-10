@@ -28,6 +28,19 @@ app.use(function(req, res, next) {
   next();
 });
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+app.use(async function(req, res, next) {
+  if (req.url.startsWith("/_data")) {
+    await sleep(1000);
+  }
+
+  next();
+});
+
+// This is what serves things from the 'served/_data' folder
 app.use(express.static("served"));
 
 app.get("/", (req, res) => {

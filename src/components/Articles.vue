@@ -1,7 +1,8 @@
 <template>
   <article>
     {{ text }}
-    <img :src="img" />
+    <!-- thanks to https://cloudfour.com/thinks/when-7-kb-equals-7-mb/ for -->
+    <img :src="img" crossorigin="anonymous" />
   </article>
 </template>
 
@@ -22,6 +23,15 @@ export default {
       this.msg = response.data.msg;
       this.text = response.data.article.text;
       this.img = response.data.article.img;
+    });
+
+    const updateChannel = new BroadcastChannel("wbu-channel");
+    this.imgUpdate = 1;
+    updateChannel.addEventListener("message", event => {
+      if (event.data.payload.updatedUrl === this.img) {
+        this.img = `${this.img}?upd=${this.imgUpdate}`;
+        this.imgUpdate++;
+      }
     });
   }
 };
